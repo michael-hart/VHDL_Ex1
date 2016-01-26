@@ -66,24 +66,13 @@ BEGIN
 						-- Check to see if done
 						IF done = '0' THEN
 						
-							IF err1 > err2 THEN
+							IF err1 > err2 OR (err1 = err2 AND xbias = '0') THEN
 								error <= slv(signed(error) + signed(yincr) - signed(xincr));
 								x <= slv(signed(x) + 1);
 								y <= slv(signed(y) + 1);
-							ELSIF err1 < err2 THEN
+							ELSIF err1 < err2 OR (err1 = err2 AND xbias = '1') THEN
 								error <= slv(signed(error) + signed(yincr));
 								x <= slv(signed(x) + 1);
-							ELSE
-								-- Check xbias
-								IF xbias = '1' THEN
-									error <= slv(signed(error) + signed(yincr));
-									x <= slv(signed(x) + 1);
-								ELSE
-									error <= slv(signed(error) + signed(yincr) - signed(xincr));
-									x <= slv(signed(x) + 1);
-									y <= slv(signed(y) + 1);
-								END IF xbias;
-							
 							END IF err1err2;
 						
 						-- No else, as outputs are not changed if done is 1
