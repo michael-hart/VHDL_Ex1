@@ -23,17 +23,23 @@ ARCHITECTURE behav OF draw_octant IS
 
 BEGIN
 
+	C1 : PROCESS(error, xincr, yincr, x1, y1, xnew, ynew, init, draw)
+		VARIABLE err1_v, err2_v : std_logic_vector(12 DOWNTO 0);
+ 
+		BEGIN
+			-- Use of inbuilt function abs, assume synthesizable 
+			err1 <= slv(abs(signed(error) + signed(yincr)));
+			err2 <= slv(abs(signed(error) + signed(yincr) - signed(xincr)));
+			
+			-- done is a number of comparisons, collected together by AND gates 
+			done <=	x = xnew 	AND
+						y = ynew 	AND
+						init = '0' 	AND
+						draw = '0'	;
+		
+		END PROCESS C1;
 
-
-  C1 : PROCESS(error, xincr, yincr, x1, y1, xnew, ynew, init, draw)
-
-    VARIABLE err1_v, err2_v : std_logic_vector(12 DOWNTO 0);
-    
-  BEGIN
-
-  END PROCESS C1;
-
-  R1 : PROCESS
+  R1 : PROCESS(disable, err1, err2, xbias, init, draw, done)
   BEGIN
   
   END PROCESS R1;
