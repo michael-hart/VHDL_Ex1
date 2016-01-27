@@ -43,8 +43,12 @@ BEGIN
 		
 		END PROCESS C1;
 
-	R1 : PROCESS(disable, err1, err2, xbias, init, draw, done1, xin, yin, x1, y1, error, xincr, yincr) -- Added xin, yin, x1, y1, error as they are missing from sensitivity list
+	R1 : PROCESS
 		BEGIN
+			
+			-- Wait for a clock pulse input
+			WAIT UNTIL clk'EVENT AND clk = '1';
+		
 			-- Only assign outputs if disable is low
 			IF disable='0' THEN
 				-- If initialising, assign outputs as follows
