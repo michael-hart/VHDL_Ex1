@@ -29,8 +29,8 @@ BEGIN
  
 		BEGIN
 			-- Use of inbuilt function abs, assume synthesizable 
-			err1 <= slv(abs(signed(error) + signed(yincr)));
-			err2 <= slv(abs(signed(error) + signed(yincr) - signed(xincr)));
+			err1 <= slv(abs(signed(unsigned(error) + unsigned(yincr))));
+			err2 <= slv(abs(signed(unsigned(error) + unsigned(yincr) - unsigned(xincr))));
 			
 			-- done is a number of comparisons, collected together by AND gates 
 			done1 <= '0';
@@ -61,23 +61,28 @@ BEGIN
 					-- Assign increment values
 					xincr <= "000000000000";
 					yincr <= "000000000000";
+					-- Assign error to 0
+					error <= "0000000000000";
 					
 				-- else check other parameters
 				ELSE
 					IF draw = '1' THEN
-						xincr <= slv(signed(xin) - signed(x1));
-						yincr <= slv(signed(yin) - signed(y1));
+						xincr <= slv(unsigned(xin) - unsigned(x1));
+						yincr <= slv(unsigned(yin) - unsigned(y1));
 						xnew <= xin;
 						ynew <= yin;
+						-- Assign error to 0
+						error <= "0000000000000";
 					ELSE
 						-- Check to see if done
 						IF done1 = '0' THEN
 						
 							IF err1 > err2 OR (err1 = err2 AND xbias = '0') THEN
-								error <= slv(signed(error) + signed(yincr) - signed(xincr));
-								x1 <= slv(signed(x1) + 1);
-								y1 <= slv(signed(y1) + 1);
-							ELSIF err1 < err2 OR (err1 = err2 AND xbias = '1') THEN
+								error <= slv(unsigned(error) + unsigned(yincr) - unsigned(xincr));
+								x1 <= slv(unsigned(x1) + 1);
+								y1 <= slv(unsigned(y1) + 1);
+							-- ELSIF err1 < err2 OR (err1 = err2 AND xbias = '1') THEN
+							ELSE
 								error <= slv(signed(error) + signed(yincr));
 								x1 <= slv(signed(x1) + 1);
 							END IF;
