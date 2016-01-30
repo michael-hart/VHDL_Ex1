@@ -28,9 +28,20 @@ BEGIN
 		VARIABLE err1_v, err2_v : std_logic_vector(12 DOWNTO 0);
  
 		BEGIN
-			-- Use of inbuilt function abs, assume synthesizable 
-			err1 <= slv(abs(signed(unsigned(error) + unsigned(yincr))));
-			err2 <= slv(abs(signed(unsigned(error) + unsigned(yincr) - unsigned(xincr))));
+		
+			-- Could use inbuilt function abs; for now, perform abs manually
+			err1_v := slv(unsigned(error) + unsigned(yincr));
+			err2_v := slv(unsigned(error) + unsigned(yincr) - unsigned(xincr));
+			
+			err1 <= err1_v;
+			IF signed(err1_v) < 0 THEN
+				err1 <= slv(0 - signed(err1_v));
+			END IF; -- err1_v
+			
+			err2 <= err2_v;
+			IF signed(err2_v) < 0 THEN
+				err2 <= slv(0 - signed(err2_v));
+			END IF; -- err2_v
 			
 			-- done is a number of comparisons, collected together by AND gates 
 			done1 <= '0';
@@ -50,7 +61,7 @@ BEGIN
 			WAIT UNTIL clk'EVENT AND clk = '1';
 		
 			-- Only assign outputs if disable is low
-			IF disable='0' THEN
+			IF disable = '0' THEN
 				-- If initialising, assign outputs as follows
 				IF init = '1' THEN
 					-- Assign x, y values
